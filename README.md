@@ -156,3 +156,7 @@ Feel free to submit issues and pull requests!
 ## License
 
 MIT License - see LICENSE file for details
+
+## Inspiration
+
+This project was inspired by [canvas-student-data-export](https://github.com/davekats/canvas-student-data-export)
