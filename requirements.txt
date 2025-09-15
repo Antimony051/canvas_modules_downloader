@@ -1,0 +1,6 @@
+beautifulsoup4
+requests
+jsonpickle
+canvasapi
+python-dateutil
+PyYAML
