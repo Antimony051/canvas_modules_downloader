@@ -44,7 +44,7 @@ downloads/
 
 2. **Install Python dependencies**:
    ```bash
-   pip install -r requirements.txt
+   uv sync
    ```
 
 3. **Set up credentials**:

@@ -1,0 +1,29 @@
+[project]
+name = "canvas-modules-downloader"
+version = "0.1.0"
+description = "A Python utility to download files from Canvas LMS course modules, including files embedded in pages."
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [
+    { name = "antimony051", email = "646E65@646E65.com" },
+]
+license = { text = "MIT" }
+
+dependencies = [
+    "beautifulsoup4>=4.14.2",
+    "pyyaml>=6.0.3",
+    "requests>=2.32.5",
+]
+
+[project.urls]
+Repository = "https://github.com/Antimony051/canvas_modules_downloader"
+
+[project.scripts]
+canvas-modules-downloader = "canvas_module_downloader:main"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["canvas_module_downloader.py", "utils"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
