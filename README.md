@@ -49,9 +49,9 @@ downloads/
 
 3. **Set up credentials**:
    ```bash
-   cp credentials.yaml.example credentials.yaml
-   # Edit credentials.yaml with your Canvas details
+   bash setup.sh
    ```
+   This will prompt you for your Canvas URL and API token and write `credentials.yaml` automatically.
 
 ## Configuration
 
