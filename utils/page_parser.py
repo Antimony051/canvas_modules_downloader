@@ -2,7 +2,7 @@ import re
 from bs4 import BeautifulSoup
 
 
-def extract_canvas_file_links(html_content, canvas_base_url):
+def extract_canvas_file_links(html_content):
     """Extract Canvas file download links from HTML content."""
     if not html_content:
         return []
@@ -16,22 +16,9 @@ def extract_canvas_file_links(html_content, canvas_base_url):
         link = holder.find('a', href=True)
         if link:
             href = link['href']
-            filename = link.get_text(strip=True)
-            
-            # Look for file ID in href or data attributes
             file_id_match = re.search(r'/files/(\d+)', href)
             if file_id_match:
-                # Convert relative URLs to absolute
-                if href.startswith('/'):
-                    full_url = canvas_base_url.rstrip('/') + href
-                else:
-                    full_url = href
-                
-                file_links.append({
-                    'url': full_url,
-                    'filename': filename,
-                    'file_id': file_id_match.group(1)
-                })
+                file_links.append({'file_id': file_id_match.group(1)})
     
     # Also find regular links to files (fallback)
     for link in soup.find_all('a', href=True):
@@ -50,28 +37,9 @@ def extract_canvas_file_links(html_content, canvas_base_url):
         ]
         
         for pattern in patterns:
-            file_match = re.search(pattern, href)
-            if file_match:
-                # Convert relative URLs to absolute
-                if href.startswith('/'):
-                    full_url = canvas_base_url.rstrip('/') + href
-                else:
-                    full_url = href
-                
-                # Extract filename from link text or href
-                filename = link.get_text(strip=True)
-                if not filename or len(filename) > 100:  # Use href-based name if text is too long/empty
-                    filename = href.split('/')[-1] or 'file'
-                
-                # Extract file ID
+            if re.search(pattern, href):
                 file_id_match = re.search(r'/files/(\d+)', href)
-                file_id = file_id_match.group(1) if file_id_match else None
-                
-                file_links.append({
-                    'url': full_url,
-                    'filename': filename,
-                    'file_id': file_id
-                })
+                file_links.append({'file_id': file_id_match.group(1) if file_id_match else None})
                 break
     
     return file_links

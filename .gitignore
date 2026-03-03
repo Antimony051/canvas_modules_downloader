@@ -1,7 +1,5 @@
 # Credentials and sensitive files
 credentials.yaml
-*.yaml
-!credentials.yaml.example
 
 # Downloads directory
 downloads/
@@ -15,7 +13,6 @@ __pycache__/
 build/
 develop-eggs/
 dist/
-downloads/
 eggs/
 .eggs/
 lib/

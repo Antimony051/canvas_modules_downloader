@@ -10,11 +10,11 @@ from .page_parser import extract_canvas_file_links
 
 # ── Phase 1: Discover file IDs from module content ──────────────────
 
-def _extract_file_ids_from_html(html, base_url):
+def _extract_file_ids_from_html(html):
     """Return set of file-ID strings found in HTML body."""
     if not html:
         return set()
-    links = extract_canvas_file_links(html, base_url)
+    links = extract_canvas_file_links(html)
     return {fl["file_id"] for fl in links if fl.get("file_id")}
 
 
@@ -28,7 +28,6 @@ def discover_file_ids(api: CanvasAPI, course_id: int, module_ids=None):
     modules = api.get_modules(course_id)
     discovered: dict[str, dict] = {}
     module_map: dict[str, str] = {}
-    base_url = api.base_url
 
     for mod in modules:
         mod_id = mod["id"]
@@ -55,7 +54,7 @@ def discover_file_ids(api: CanvasAPI, course_id: int, module_ids=None):
                 print(f"  Scanning page: {title}")
                 try:
                     page = api.get_page(course_id, page_url)
-                    for fid in _extract_file_ids_from_html(page.get("body"), base_url):
+                    for fid in _extract_file_ids_from_html(page.get("body")):
                         _record(discovered, module_map, fid, f"Page: {title}", mod_name)
                 except Exception as e:
                     print(f"    Warning: could not fetch page '{title}': {e}")
@@ -64,7 +63,7 @@ def discover_file_ids(api: CanvasAPI, course_id: int, module_ids=None):
                 print(f"  Scanning assignment: {title}")
                 try:
                     assignment = api.get_assignment(course_id, item["content_id"])
-                    for fid in _extract_file_ids_from_html(assignment.get("description"), base_url):
+                    for fid in _extract_file_ids_from_html(assignment.get("description")):
                         _record(discovered, module_map, fid, f"Assignment: {title}", mod_name)
                 except Exception as e:
                     print(f"    Warning: could not fetch assignment '{title}': {e}")
@@ -73,7 +72,7 @@ def discover_file_ids(api: CanvasAPI, course_id: int, module_ids=None):
                 print(f"  Scanning discussion: {title}")
                 try:
                     topic = api.get_discussion_topic(course_id, item["content_id"])
-                    for fid in _extract_file_ids_from_html(topic.get("message"), base_url):
+                    for fid in _extract_file_ids_from_html(topic.get("message")):
                         _record(discovered, module_map, fid, f"Discussion: {title}", mod_name)
                 except Exception as e:
                     print(f"    Warning: could not fetch discussion '{title}': {e}")
