@@ -1,35 +1,37 @@
 # Canvas Module Downloader
 
-A Python utility to download files from Canvas LMS course modules, including files embedded in pages.
+A Python utility to download files from Canvas LMS course modules, including files embedded in pages, assignments, and discussions.
 
 ## Features
 
 - **Interactive Course Selection**: Browse all your Canvas courses organized by term
-- **Module Discovery**: View all modules within a selected course  
+- **Module Discovery**: View all modules within a selected course
 - **Flexible Downloads**: Download files from a single module or all modules
-- **Complete File Detection**: Downloads both direct file attachments AND files linked within pages
-- **Smart Organization**: Files are organized in a clean directory structure
+- **Complete File Detection**: Downloads files from direct attachments, pages, assignments, and discussion topics
+- **Smart Organization**: Files are organized by their Canvas folder structure or module name
+- **Completeness Report**: Shows how many files were discovered vs. the total in each Canvas folder
 - **Duplicate Prevention**: Skips files that already exist
 
 ## What Gets Downloaded
 
 - **Direct Files**: Files attached directly to modules
-- **Page-Embedded Files**: Files linked within Canvas pages (handles `instructure_file_holder` structures)
-- **Organized Storage**: Files are saved in structured directories by course and module
+- **Page-Embedded Files**: Files linked within Canvas pages
+- **Assignment Files**: Files embedded in assignment descriptions
+- **Discussion Files**: Files embedded in discussion topic bodies
 
 ## Directory Structure
 
 ```
 downloads/
 └── [Course Name]/
-    └── modules/
+    ├── folders/           # Files whose Canvas folder is known
+    │   ├── [folder-path]/
+    │   │   ├── document.pdf
+    │   │   └── slides.pptx
+    │   └── ...
+    └── modules/           # Files with no resolvable folder (e.g. locked files)
         └── [Module Name]/
-            ├── files/           # Direct file attachments
-            │   ├── document1.pdf
-            │   └── spreadsheet.xlsx
-            └── pages/           # Files found in pages
-                ├── lecture_notes.pdf
-                └── assignment.docx
+            └── lecture_notes.pdf
 ```
 
 ## Installation
@@ -57,22 +59,17 @@ downloads/
 
 1. **API_URL**: Your institution's Canvas URL (e.g., `https://school.instructure.com`)
 
-2. **API_KEY**: 
+2. **API_KEY**:
    - Log into Canvas
-   - Go to Account → Settings  
+   - Go to Account → Settings
    - Scroll to "Approved Integrations"
    - Click "+ New Access Token"
    - Copy the generated token
-
-3. **USER_ID**:
-   - After logging into Canvas, visit: `https://<your-canvas-url>/api/v1/users/self`
-   - Find the `id` field in the JSON response
 
 ### Example credentials.yaml
 ```yaml
 API_URL: https://canvas.university.edu
 API_KEY: your_generated_token_here
-USER_ID: 12345
 ```
 
 ## Usage
@@ -116,37 +113,29 @@ python canvas_module_downloader.py --help
 1. **Run the script**: `python canvas_module_downloader.py`
 2. **Select course**: Enter course number from the displayed list
 3. **Choose download option**:
-   - Enter module number (1, 2, 3...) for single module
-   - Enter 'all' for all modules  
-   - Enter 'q' to quit
+   - Enter module number (1, 2, 3...) for a single module
+   - Enter `all` for all modules
+   - Enter `q` to quit
 4. **Files downloaded**: Check the `downloads/` directory
-
-## File Types Handled
-
-- **Direct Module Files**: Any file directly attached to a module
-- **Page-Embedded Files**: Canvas file links found in page content, including:
-  - `instructure_file_holder` structures
-  - Direct Canvas file URLs
-  - Download links
 
 ## Error Handling
 
 - **Authentication errors**: Clear messages for invalid API tokens
+- **Locked files**: Two-tier resolution tries the public URL fallback before giving up
 - **Network issues**: Graceful handling of download failures
-- **Missing files**: Warnings for files that can't be accessed
+- **Missing content**: Warnings for pages, assignments, or discussions that can't be fetched
 - **Duplicate prevention**: Automatic skip of existing files
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.10+
 - Canvas API access token
 - Network access to your Canvas instance
 
 ## Dependencies
 
-- `canvasapi` - Canvas LMS API wrapper
-- `beautifulsoup4` - HTML parsing for page content
-- `requests` - HTTP downloads
+- `beautifulsoup4` - HTML parsing for page/assignment/discussion content
+- `requests` - HTTP client (used directly against the Canvas REST API)
 - `pyyaml` - Configuration file parsing
 
 ## Contributing
