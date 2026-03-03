@@ -35,11 +35,12 @@ def download_file_from_url(url, file_path, filename):
     """Download a file from URL to specified path."""
     try:
         print(f"    Downloading: {filename}...")
+        # TODO: use streaming download to avoid loading large files into memory
         response = requests.get(url, allow_redirects=True)
         response.raise_for_status()
-        
+
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        
+
         with open(file_path, 'wb') as f:
             f.write(response.content)
         
